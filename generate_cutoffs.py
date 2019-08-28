@@ -93,7 +93,7 @@ def driver(game_results_file, base_fantasy_results_file, current_fantasy_results
 
     output = open(output_file, 'w')
     for cutoff in cutoff_list:
-        output.write(str(cutoff))
+        output.write(str(cutoff)+'\n')
 
 
 # get the cutoffs
