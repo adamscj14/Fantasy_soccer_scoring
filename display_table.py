@@ -86,7 +86,7 @@ def driver(standings_file, name_file, output_file):
 
     standings_columns = ["Team", "Points", "Wins", "Draws", "Losses", "Goals For", "Goals Against", "Goal Difference"]
     standings_df = pd.DataFrame(standings_list, columns = standings_columns)
-    standings_df.sort_values(by=["Points", "Goals For","Goal Difference"], ascending = False, inplace = True)
+    standings_df.sort_values(by=["Points", "Goals For","Goals Against"], ascending = False, inplace = True)
     print standings_df
     
     if output_file:
