@@ -86,7 +86,7 @@ def driver(fantasy_results_file, output_file, cutoff_file, results_file, standin
     with open(standings_file, 'r') as standings_json:
         standings_dict = json.load(standings_json)
 
-    new_standings_dict = update_standings_dict(fantasy_results_df, cutoff_list, results_file, standings_dict)
+    new_standings_dict = get_standings_dict(fantasy_results_df, cutoff_list, results_file, standings_dict)
 
     if not output_file:
         output_file = standings_file
@@ -111,36 +111,36 @@ def get_standings_dict(fantasy_results_df, cutoff_list, results_file, standings_
         total_goals.append(team_1_goals)
         total_goals.append(team_2_goals)
         
-        team_dict[row.team_1][4] += team_1_goals
-        team_dict[row.team_1][5] += team_2_goals
-        team_dict[row.team_1][6] += (team_1_goals - team_2_goals)
+        team_dict[str(int(row.team_1))][4] += team_1_goals
+        team_dict[str(int(row.team_1))][5] += team_2_goals
+        team_dict[str(int(row.team_1))][6] += (team_1_goals - team_2_goals)
         
-        team_dict[row.team_2][4] += team_2_goals
-        team_dict[row.team_2][5] += team_1_goals
-        team_dict[row.team_2][6] += (team_2_goals - team_1_goals)
+        team_dict[str(int(row.team_2))][4] += team_2_goals
+        team_dict[str(int(row.team_2))][5] += team_1_goals
+        team_dict[str(int(row.team_2))][6] += (team_2_goals - team_1_goals)
         
         # tie
         if team_1_goals == team_2_goals:
             
             tie_count += 1
-            team_dict[row.team_1][0] += 1
-            team_dict[row.team_1][2] += 1
-            team_dict[row.team_2][0] += 1
-            team_dict[row.team_2][2] += 1
+            team_dict[str(int(row.team_1))][0] += 1
+            team_dict[str(int(row.team_1))][2] += 1
+            team_dict[str(int(row.team_2))][0] += 1
+            team_dict[str(int(row.team_2))][2] += 1
         # team 1 win
         elif team_1_goals > team_2_goals:
             non_tie += 1
-            team_dict[row.team_1][0] += 3
-            team_dict[row.team_1][1] += 1
-            team_dict[row.team_2][3] += 1
+            team_dict[str(int(row.team_1))][0] += 3
+            team_dict[str(int(row.team_1))][1] += 1
+            team_dict[str(int(row.team_2))][3] += 1
         # team 2 win
         elif team_1_goals < team_2_goals:
             non_tie += 1
-            team_dict[row.team_2][0] += 3
-            team_dict[row.team_2][1] += 1
-            team_dict[row.team_1][3] += 1
-        #print team_dict
-        results.write("{}\t{}-{}\t{}\n".format(row.team_1, team_1_goals, team_2_goals, row.team_2))
+            team_dict[str(int(row.team_2))][0] += 3
+            team_dict[str(int(row.team_2))][1] += 1
+            team_dict[str(int(row.team_1))][3] += 1
+        #prstr(int team_dict
+        results.write("{}\t{}-{}\t{}\n".format(int(row.team_1), team_1_goals, team_2_goals, int(row.team_2)))
     print "avg fantasy goals: {}".format(np.mean(total_goals))
 
     results.close()
