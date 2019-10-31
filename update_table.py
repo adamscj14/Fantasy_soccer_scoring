@@ -26,6 +26,7 @@ ARGUMENTS
     -c <file>            REQUIRED: return-delimited list of cutoff values in order
     -o <file>            OPTIONAL: output file name, if none, overwrite standings file
     -r <file>            REQUIRED: results file to append to
+    -w <int>             OPTIONAL: number of game weeks to consider from results file
 
 """
     sys.exit(exit_num)
@@ -35,7 +36,7 @@ ARGUMENTS
 
 def main(argv): 
     try: 
-        opts, args = getopt.getopt(sys.argv[1:], "f:o:c:r:s:")
+        opts, args = getopt.getopt(sys.argv[1:], "f:o:c:r:s:w:")
     except getopt.GetoptError:
         print "Error: Incorrect usage of getopts flags!"
         help() 
@@ -45,6 +46,7 @@ def main(argv):
     cutoff_file = False
     results_file = False
     standings_file = False
+    weeks = 1
 
     for opt, arg in opts:
         print opt,arg
@@ -64,6 +66,9 @@ def main(argv):
         elif opt == "-s":
             standings_file = arg
 
+        elif opt == "-w":
+            weeks = int(arg)
+
         else:
             print "Error: Incorrect usage of getopts flags!"
             help()
@@ -74,19 +79,18 @@ def main(argv):
         print "Error: At least one of the required inputs is missing."
         help()
 
-    driver(fantasy_results_file, output_file, cutoff_file, results_file, standings_file)
+    driver(fantasy_results_file, output_file, cutoff_file, results_file, standings_file, weeks)
 
 
-def driver(fantasy_results_file, output_file, cutoff_file, results_file, standings_file):
+def driver(fantasy_results_file, output_file, cutoff_file, results_file, standings_file, weeks):
     
     fantasy_results_df = pd.read_csv(fantasy_results_file, names = ['team_1', 'pts_1', 'team_2', 'pts_2'])
-
     cutoff_list = parse_cutoff_file(cutoff_file)
     
     with open(standings_file, 'r') as standings_json:
         standings_dict = json.load(standings_json)
 
-    new_standings_dict = get_standings_dict(fantasy_results_df, cutoff_list, results_file, standings_dict)
+    new_standings_dict = get_standings_dict(fantasy_results_df, cutoff_list, results_file, standings_dict, weeks)
 
     if not output_file:
         output_file = standings_file
@@ -95,7 +99,7 @@ def driver(fantasy_results_file, output_file, cutoff_file, results_file, standin
         json.dump(standings_dict, out_file)
 
 
-def get_standings_dict(fantasy_results_df, cutoff_list, results_file, standings_dict):
+def get_standings_dict(fantasy_results_df, cutoff_list, results_file, standings_dict, weeks):
     # prep data structures to hold relevant score data
     team_dict = standings_dict
     tie_count = 0
@@ -104,8 +108,15 @@ def get_standings_dict(fantasy_results_df, cutoff_list, results_file, standings_
     results = open(results_file, 'a')
 
     total_goals = []
+    num_games = len(fantasy_results_df.index)
+    num_games_of_interest = int(weeks) * 5
+    ignore_games = num_games - num_games_of_interest
     # cycle through games to find results
+    game_count = 0
     for ind, row in fantasy_results_df.iterrows():
+        game_count += 1
+        if game_count <= ignore_games:
+            continue
         team_1_goals = find_goals(cutoff_list, row.pts_1)
         team_2_goals = find_goals(cutoff_list, row.pts_2)
         total_goals.append(team_1_goals)
