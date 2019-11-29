@@ -119,6 +119,8 @@ def get_standings_dict(fantasy_results_df, cutoff_list, results_file, standings_
             continue
         team_1_goals = find_goals(cutoff_list, row.pts_1)
         team_2_goals = find_goals(cutoff_list, row.pts_2)
+        team_1_fp = row.pts_1
+        team_2_fp = row.pts_2
         total_goals.append(team_1_goals)
         total_goals.append(team_2_goals)
         
@@ -151,7 +153,7 @@ def get_standings_dict(fantasy_results_df, cutoff_list, results_file, standings_
             team_dict[str(int(row.team_2))][1] += 1
             team_dict[str(int(row.team_1))][3] += 1
         #prstr(int team_dict
-        results.write("{}\t{}-{}\t{}\n".format(int(row.team_1), team_1_goals, team_2_goals, int(row.team_2)))
+        results.write("{}\t{}\t{}-{}\t{}\t{}\n".format(int(row.team_1), float(team_1_fp), team_1_goals, team_2_goals, float(team_2_fp), int(row.team_2)))
     print "avg fantasy goals: {}".format(np.mean(total_goals))
 
     results.close()

@@ -77,16 +77,16 @@ def driver(output_file, name_file, results_file):
         
         for line in results:
             if count == -1:
-                output_file.write("GW\tHome\tResult\tAway\n")
+                output_file.write("GW\tHome\tHome Pts\tResult\tAway Pts\tAway\n")
                 count += 1
                 continue
             if count % 5 == 0:
                 game_week += 1
             line_list = line.strip().split('\t')
             team_1 = name_conversion_dict[int(line_list[0])]
-            team_2 = name_conversion_dict[int(line_list[2])]
+            team_2 = name_conversion_dict[int(line_list[4])]
                 
-            output_file.write("{}\t{}\t{}\t{}\n".format(game_week, team_1, line_list[1], team_2))
+            output_file.write("{}\t{}\t{}\t{}\t{}\t{}\n".format(game_week, team_1, line_list[1], line_list[2], line_list[3], team_2))
             
             count += 1
 
