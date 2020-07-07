@@ -82,9 +82,11 @@ def driver(standings_file, name_file, output_file):
             team_name = name_conversion_dict[int(team_num)]
             new_list = [team_name]
         new_list += standings_dict[team_num]
-        standings_list.append(new_list)
+        wdl = '-'.join([str(x) for x in new_list[2:5]])
+        wdl_list = [new_list[0], new_list[1], wdl, new_list[5], new_list[6], new_list[7]]
+        standings_list.append(wdl_list)
 
-    standings_columns = ["Team", "Points", "Wins", "Draws", "Losses", "Goals For", "Goals Against", "Goal Difference"]
+    standings_columns = ["Team", "Points", "W-D-L", "Goals For", "Goals Against", "Goal Difference"]
     standings_df = pd.DataFrame(standings_list, columns = standings_columns)
     standings_df.sort_values(by=["Points", "Goals For","Goals Against"], ascending = False, inplace = True)
     print standings_df
